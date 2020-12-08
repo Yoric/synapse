@@ -947,7 +947,7 @@ class OidcHandler(BaseHandler):
 
 
 UserAttributeDict = TypedDict(
-    "UserAttributeDict", {"localpart": str, "display_name": Optional[str]}
+    "UserAttributeDict", {"localpart": Optional[str], "display_name": Optional[str]}
 )
 C = TypeVar("C")
 
@@ -1029,7 +1029,7 @@ env = Environment(finalize=jinja_finalize)
 @attr.s
 class JinjaOidcMappingConfig:
     subject_claim = attr.ib()  # type: str
-    localpart_template = attr.ib()  # type: Template
+    localpart_template = attr.ib(type=Optional["Template"])
     display_name_template = attr.ib()  # type: Optional[Template]
     extra_attributes = attr.ib()  # type: Dict[str, Template]
 
@@ -1048,17 +1048,15 @@ class JinjaOidcMappingProvider(OidcMappingProvider[JinjaOidcMappingConfig]):
         subject_claim = config.get("subject_claim", "sub")
 
         if "localpart_template" not in config:
-            raise ConfigError(
-                "missing key: oidc_config.user_mapping_provider.config.localpart_template"
-            )
-
-        try:
-            localpart_template = env.from_string(config["localpart_template"])
-        except Exception as e:
-            raise ConfigError(
-                "invalid jinja template for oidc_config.user_mapping_provider.config.localpart_template: %r"
-                % (e,)
-            )
+            localpart_template = None  # type: Optional[Template]
+        else:
+            try:
+                localpart_template = env.from_string(config["localpart_template"])
+            except Exception as e:
+                raise ConfigError(
+                    "invalid jinja template for oidc_config.user_mapping_provider.config.localpart_template: %r"
+                    % (e,)
+                )
 
         display_name_template = None  # type: Optional[Template]
         if "display_name_template" in config:
@@ -1100,14 +1098,17 @@ class JinjaOidcMappingProvider(OidcMappingProvider[JinjaOidcMappingConfig]):
     async def map_user_attributes(
         self, userinfo: UserInfo, token: Token, failures: int
     ) -> UserAttributeDict:
-        localpart = self._config.localpart_template.render(user=userinfo).strip()
+        localpart = None  # type: Optional[str]
 
-        # Ensure only valid characters are included in the MXID.
-        localpart = map_username_to_mxid_localpart(localpart)
+        if self._config.localpart_template:
+            localpart = self._config.localpart_template.render(user=userinfo).strip()
 
-        # Append suffix integer if last call to this function failed to produce
-        # a usable mxid.
-        localpart += str(failures) if failures else ""
+            # Ensure only valid characters are included in the MXID.
+            localpart = map_username_to_mxid_localpart(localpart)
+
+            # Append suffix integer if last call to this function failed to produce
+            # a usable mxid.
+            localpart += str(failures) if failures else ""
 
         display_name = None  # type: Optional[str]
         if self._config.display_name_template is not None:
