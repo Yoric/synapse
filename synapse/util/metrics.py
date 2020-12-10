@@ -109,6 +109,7 @@ class Measure:
         self.clock = clock
         self.name = name
         parent_context = current_context()
+        assert isinstance(parent_context, LoggingContext)
         self._logging_context = LoggingContext(
             "Measure[%s]" % (self.name,), parent_context
         )
