@@ -178,7 +178,7 @@ def make_request(
     """
     Make a web request using the given method, path and content, and render it
 
-    Returns the Request and the Channel underneath.
+    Returns the fake Channel object which records the response to the request.
 
     Args:
         site: The twisted Site to use to render the request

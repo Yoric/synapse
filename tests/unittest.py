@@ -406,7 +406,7 @@ class HomeserverTestCase(TestCase):
                  tells the channel the request is finished.
 
         Returns:
-            channel
+            The FakeChannel object which stores the result of the request.
         """
         return make_request(
             self.reactor,
