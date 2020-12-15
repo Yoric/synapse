@@ -41,8 +41,8 @@ class UserSharedRoomsTest(unittest.HomeserverTestCase):
         self.store = hs.get_datastore()
         self.handler = hs.get_user_directory_handler()
 
-    def _get_shared_rooms(self, token, other_user):
-        channel = self.make_request(
+    def _get_shared_rooms(self, token, other_user) -> FakeChannel:
+        return self.make_request(
             "GET",
             "/_matrix/client/unstable/uk.half-shot.msc2666/user/shared_rooms/%s"
             % other_user,
