@@ -67,9 +67,7 @@ class FallbackAuthTests(unittest.HomeserverTestCase):
 
     def register(self, expected_response: int, body: JsonDict) -> FakeChannel:
         """Make a register request."""
-        channel = self.make_request(
-            "POST", "register", body
-        )  # type: SynapseRequest, FakeChannel
+        channel = self.make_request("POST", "register", body)
 
         self.assertEqual(channel.code, expected_response)
         return channel
@@ -83,7 +81,7 @@ class FallbackAuthTests(unittest.HomeserverTestCase):
 
         channel = self.make_request(
             "GET", "auth/m.login.recaptcha/fallback/web?session=" + session
-        )  # type: SynapseRequest, FakeChannel
+        )
         self.assertEqual(channel.code, 200)
 
         channel = self.make_request(

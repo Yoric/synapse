@@ -65,7 +65,7 @@ class WorkerAuthenticationTestCase(BaseMultiWorkerStreamTestCase):
             "POST",
             "register",
             {"username": "user", "type": "m.login.password", "password": "bar"},
-        )  # type: SynapseRequest, FakeChannel
+        )
         self.assertEqual(channel_1.code, 401)
 
         # Grab the session
