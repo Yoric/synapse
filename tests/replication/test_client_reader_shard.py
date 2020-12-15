@@ -41,7 +41,7 @@ class ClientReaderTestCase(BaseMultiWorkerStreamTestCase):
         worker_hs = self.make_worker_hs("synapse.app.client_reader")
         site = self._hs_to_site[worker_hs]
 
-        request_1, channel_1 = make_request(
+        channel_1 = make_request(
             self.reactor,
             site,
             "POST",
@@ -54,7 +54,7 @@ class ClientReaderTestCase(BaseMultiWorkerStreamTestCase):
         session = channel_1.json_body["session"]
 
         # also complete the dummy auth
-        request_2, channel_2 = make_request(
+        channel_2 = make_request(
             self.reactor,
             site,
             "POST",
@@ -73,7 +73,7 @@ class ClientReaderTestCase(BaseMultiWorkerStreamTestCase):
         worker_hs_2 = self.make_worker_hs("synapse.app.client_reader")
 
         site_1 = self._hs_to_site[worker_hs_1]
-        request_1, channel_1 = make_request(
+        channel_1 = make_request(
             self.reactor,
             site_1,
             "POST",
@@ -87,7 +87,7 @@ class ClientReaderTestCase(BaseMultiWorkerStreamTestCase):
 
         # also complete the dummy auth
         site_2 = self._hs_to_site[worker_hs_2]
-        request_2, channel_2 = make_request(
+        channel_2 = make_request(
             self.reactor,
             site_2,
             "POST",

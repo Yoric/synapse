@@ -174,7 +174,7 @@ def make_request(
     custom_headers: Optional[
         Iterable[Tuple[Union[bytes, str], Union[bytes, str]]]
     ] = None,
-):
+) -> FakeChannel:
     """
     Make a web request using the given method, path and content, and render it
 
@@ -202,7 +202,7 @@ def make_request(
              is finished.
 
     Returns:
-        Tuple[synapse.http.site.SynapseRequest, channel]
+        channel
     """
     if not isinstance(method, bytes):
         method = method.encode("ascii")
@@ -265,7 +265,7 @@ def make_request(
     if await_result:
         channel.await_result()
 
-    return req, channel
+    return channel
 
 
 @implementer(IReactorPluggableNameResolver)
